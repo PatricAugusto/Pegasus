@@ -119,27 +119,38 @@ Acesse: `http://localhost:5555`
 
 ---
 
-## 🧪 Testes Unitários
+## 🧪 Suítes de Testes Automatizados & Segurança
 
-A aplicação conta com uma suíte abrangente de testes unitários desenvolvida com **Vitest** e **Supertest**, cobrindo cada componente em isolamento com mocks tipados:
+A aplicação conta com **64 testes automatizados** divididos em suítes especializadas para garantir integridade matemática, segurança contra injeções e conformidade de API:
 
 ```bash
-# Executa a suíte completa de testes
+# Executa todos os testes (64 testes)
 npm test
+
+# Suíte 1: Testes de Segurança & Defesa contra Injeção (SQL, XSS, ReDoS, DoS, Helmet)
+npm run test:security
+
+# Suíte 2: Testes de Integração & Ciclo de Vida Financeiro (SQLite real E2E)
+npm run test:integration
+
+# Suíte 3: Testes Unitários de Componentes e Serviços
+npm run test:unit
 
 # Modo observador (watch) para TDD
 npm run test:watch
 ```
 
-Cobertura dos testes:
-* **Common:** Formatadores de moeda (BRL), datas completas/abreviadas e classes de erros de domínio (`AppError`, `NotFoundError`).
-* **Categorias:** Busca semântica case-insensitive, criação condicional e idempotência do seed padrão.
-* **Transações:** Normalização de valores negativos (`Math.abs`), fallback para categoria padrão `Outros`, cálculo de saldo líquido e ranking de gastos por categoria.
-* **Usuários:** Cadastro de novos usuários do Telegram e atualização reativa de alterações no perfil.
-* **HTTP Controllers:** Validação de contratos REST (`/health`, `/api/users`, `/api/categories`, `/api/transactions`, `/api/summary/:id`).
-* **Bot Parsing:** Validação de regex para comandos financeiros (decimais com ponto e vírgula, extração de categoria e descrição).
+### 🛡️ Camadas de Segurança Protegidas:
+1. **Defesa contra Injeção:** Testes de resiliência contra strings de SQL Injection (`' OR 1=1; DROP TABLE...`) e tags maliciosas de script (`<script>`).
+2. **Sanitização de Markdown:** Previne que mensagens enviadas pelo usuário quebrem o parser do Telegram com caracteres reservados unescaped (`*`, `_`, `[`, etc.).
+3. **Proteção contra DoS & Estouro:** Parâmetros de paginação (`?limit=`) automaticamente limitados entre 1 e 100 itens; payload limit configurado no Express (`1mb`).
+4. **Headers HTTP com Helmet:** Injeção automática de `X-Content-Type-Options: nosniff`, `X-Frame-Options: SAMEORIGIN` e `Content-Security-Policy`.
+5. **Precisão Numérica Financeira:** Sanitização e arredondamento a 2 casas decimais para evitar anomalias de ponto flutuante em JavaScript (`0.1 + 0.2`).
+6. **Limites de Transação:** Rejeição de valores zerados, não-numéricos, infinitos ou que ultrapassem R$ 1.000.000.000,00.
 
 ---
+
+## 🤖 Por que essa arquitetura facilita a IA (Fase 2)?
 
 1. **Serviços como Tools prontas**: Métodos como `transactionService.create`, `transactionService.getBalance` e `categoryService.findByName` estão 100% tipados e desacoplados de bibliotecas de bot ou HTTP. O agente de IA pode chamá-los diretamente através de Function Calling / Tool Calling.
 2. **Ponto de Injeção Claro**: O handler [`fallback.handler.ts`](file:///C:/Users/Suporte%20Quick/Desktop/Sprint/Pegasus/Pegasus/src/modules/bot/handlers/messages/fallback.handler.ts) isola qualquer mensagem de texto, áudio ou foto recebida, permitindo direcioná-la para o Agente Orquestrador sem tocar na lógica dos comandos tradicionais.

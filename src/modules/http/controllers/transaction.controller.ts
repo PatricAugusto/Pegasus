@@ -1,12 +1,16 @@
 import { Request, Response } from 'express';
 import { transactionService } from '../../transactions/transaction.service';
 import { userService } from '../../users/user.service';
+import { clampSafeInteger, sanitizeString } from '../../../common/sanitizer';
 
 export class TransactionController {
   async list(req: Request, res: Response) {
     try {
-      const telegramId = typeof req.query.telegramId === 'string' ? req.query.telegramId : undefined;
-      const limit = typeof req.query.limit === 'string' ? parseInt(req.query.limit, 10) : 20;
+      const rawTelegramId = typeof req.query.telegramId === 'string' ? req.query.telegramId : undefined;
+      const telegramId = rawTelegramId ? sanitizeString(rawTelegramId, 64) : undefined;
+
+      const rawLimit = typeof req.query.limit === 'string' ? parseInt(req.query.limit, 10) : 20;
+      const limit = clampSafeInteger(rawLimit, 1, 100, 20);
 
       let userId: string | undefined = undefined;
       if (telegramId) {
@@ -26,7 +30,7 @@ export class TransactionController {
 
   async summary(req: Request, res: Response) {
     try {
-      const telegramId = String(req.params.telegramId);
+      const telegramId = sanitizeString(String(req.params.telegramId), 64);
       const user = await userService.findByTelegramId(telegramId);
 
       if (!user) {

@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
 import { healthRouter } from './routes/health.routes';
 import { apiRouter } from './routes/api.routes';
 import { env } from '../../config/env';
@@ -9,8 +10,11 @@ import { bot } from '../bot/bot.instance';
 export function createExpressApp() {
   const app = express();
 
+  // Middleware de Segurança: Headers HTTP rígidos contra XSS, Clickjacking e sniffing
+  app.use(helmet());
+
   app.use(cors());
-  app.use(express.json());
+  app.use(express.json({ limit: '1mb' })); // Proteção contra Payload Flooding / Denial of Service
 
   // Rotas
   app.use('/', healthRouter);
