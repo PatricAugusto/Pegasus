@@ -2,9 +2,7 @@
 
 Sistema inteligente de gestão financeira pessoal construído com **Node.js**, **Express**, **TypeScript**, **GrammY (Telegram Bot)** e **SQLite (Prisma ORM)**.
 
-Desenvolvido para operar em duas fases:
-1. **Fase 1 (Atual):** Bot com comandos estruturados, menus interativos, CRUD completo de finanças e API REST em Express.
-2. **Fase 2 (Próxima):** Camada de orquestração multi-agente com LLMs (Gemini Multimodal) para interpretação de áudios, fotos de comprovantes fiscais (OCR) e conselheiro orçamentário autônomo.
+Projetado sob princípios de **alta coesão e baixo acoplamento (Clean Architecture / Modular DDD)** para permitir manutenção facilitada e integração fluida de agentes de inteligência artificial.
 
 ---
 
@@ -12,37 +10,48 @@ Desenvolvido para operar em duas fases:
 
 * **Linguagem:** TypeScript (ES2022 / NodeNext)
 * **Backend:** Node.js + Express 5
-* **Bot Framework:** [GrammY](https://grammy.dev/) (Framework moderno e tipado para Telegram)
+* **Bot Framework:** [GrammY](https://grammy.dev/) (Framework moderno e 100% tipado para Telegram)
 * **Banco de Dados:** SQLite local (`prisma/dev.db`)
 * **ORM:** Prisma 6 (Totalmente tipado, com migrações e Prisma Studio)
 * **Validação:** Zod
 
 ---
 
-## 📂 Estrutura do Projeto
+## 📂 Arquitetura Componentizada
 
 ```
-Pegasus/
-├── prisma/
-│   ├── schema.prisma        # Modelo de dados (User, Transaction, Category, Budget)
-│   └── dev.db               # Banco SQLite gerado automaticamente
-├── src/
-│   ├── config/
-│   │   └── env.ts           # Validação de variáveis de ambiente
-│   ├── db/
-│   │   └── prisma.ts        # Conexão e cliente singleton do Prisma
-│   ├── services/
-│   │   ├── user.service.ts         # Gestão de usuários do Telegram
-│   │   ├── category.service.ts     # Categorias padrão e customizadas
-│   │   └── transaction.service.ts  # Lançamentos, saldo, extrato e métricas
-│   ├── bot/
-│   │   └── bot.ts           # Handlers do Telegram (comandos, botões inline, teclado)
-│   ├── server/
-│   │   └── app.ts           # Servidor Express com rotas de API e healthcheck
-│   └── index.ts             # Inicialização do banco, Express e Bot
-├── .env.example             # Modelo das variáveis de ambiente
-├── package.json
-└── tsconfig.json
+src/
+├── common/                         # Utilitários globais e formatadores
+│   ├── formatters.ts               # Moeda (BRL), datas e meses
+│   └── errors.ts                   # Classes de erros customizados (AppError, NotFoundError)
+├── config/                         # Configuração e validação de ambiente (Zod)
+│   └── env.ts
+├── db/                             # Conexão e cliente singleton do Prisma
+│   └── prisma.ts
+├── modules/
+│   ├── categories/                 # Domínio de Categorias
+│   │   ├── category.constants.ts   # Categorias padrão (Alimentação, Transporte, etc.)
+│   │   └── category.service.ts     # Regras de negócio de categorias
+│   ├── users/                      # Domínio de Usuários
+│   │   └── user.service.ts         # Regras de negócio de usuários
+│   ├── transactions/               # Domínio de Transações
+│   │   ├── transaction.types.ts    # DTOs e tipos de balanço/resumo
+│   │   └── transaction.service.ts  # Criação, saldo, extrato e métricas por categoria
+│   ├── bot/                        # Componente de Interface: Telegram Bot
+│   │   ├── bot.context.ts          # Extensão de contexto do GrammY
+│   │   ├── bot.instance.ts         # Instância central do bot
+│   │   ├── keyboards/              # Teclados e botões inline isolados
+│   │   ├── middlewares/            # Injeção de usuário e tratamento de erros
+│   │   ├── handlers/               # Handlers de cada comando, callback e mensagem
+│   │   │   ├── commands/           # /start, /ajuda, /gasto, /receita, /saldo, etc.
+│   │   │   ├── callbacks/          # Ações dos botões inline (action_saldo, etc.)
+│   │   │   └── messages/           # Fallback (Ponto de entrada do futuro Agente LLM)
+│   │   └── bot.module.ts           # Orquestrador e inicializador do Bot
+│   └── http/                       # Componente de Interface: API REST Express
+│       ├── controllers/            # Controladores HTTP desacoplados
+│       ├── routes/                 # Roteamento modular (Health, API)
+│       └── app.ts                  # Factory e configuração do servidor Express
+└── index.ts                        # Bootstrap e lifecycle da aplicação
 ```
 
 ---
@@ -110,11 +119,7 @@ Acesse: `http://localhost:5555`
 
 ---
 
-## 🚀 Próxima Etapa: Orquestrador de Agentes & LLM
+## 🤖 Por que essa arquitetura facilita a IA (Fase 2)?
 
-Na Fase 2, adicionaremos o orquestrador subjacente:
-1. **Gemini 2.5 Flash / Pro Multimodal**:
-   - Transcrição e extração de intenção de mensagens de **voz/áudio** (*"Gastei trinta reais na farmácia"*).
-   - Leitura de comprovantes fiscais e **prints de PIX** via visão computacional.
-2. **Orquestrador de Agentes**:
-   - Router para delegar entre Registro de Transações, Consultas Analíticas e Alertas Orçamentários.
+1. **Serviços como Tools prontas**: Métodos como `transactionService.create`, `transactionService.getBalance` e `categoryService.findByName` estão 100% tipados e desacoplados de bibliotecas de bot ou HTTP. O agente de IA pode chamá-los diretamente através de Function Calling / Tool Calling.
+2. **Ponto de Injeção Claro**: O handler [`fallback.handler.ts`](file:///C:/Users/Suporte%20Quick/Desktop/Sprint/Pegasus/Pegasus/src/modules/bot/handlers/messages/fallback.handler.ts) isola qualquer mensagem de texto, áudio ou foto recebida, permitindo direcioná-la para o Agente Orquestrador sem tocar na lógica dos comandos tradicionais.
