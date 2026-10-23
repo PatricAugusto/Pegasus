@@ -119,7 +119,27 @@ Acesse: `http://localhost:5555`
 
 ---
 
-## 🤖 Por que essa arquitetura facilita a IA (Fase 2)?
+## 🧪 Testes Unitários
+
+A aplicação conta com uma suíte abrangente de testes unitários desenvolvida com **Vitest** e **Supertest**, cobrindo cada componente em isolamento com mocks tipados:
+
+```bash
+# Executa a suíte completa de testes
+npm test
+
+# Modo observador (watch) para TDD
+npm run test:watch
+```
+
+Cobertura dos testes:
+* **Common:** Formatadores de moeda (BRL), datas completas/abreviadas e classes de erros de domínio (`AppError`, `NotFoundError`).
+* **Categorias:** Busca semântica case-insensitive, criação condicional e idempotência do seed padrão.
+* **Transações:** Normalização de valores negativos (`Math.abs`), fallback para categoria padrão `Outros`, cálculo de saldo líquido e ranking de gastos por categoria.
+* **Usuários:** Cadastro de novos usuários do Telegram e atualização reativa de alterações no perfil.
+* **HTTP Controllers:** Validação de contratos REST (`/health`, `/api/users`, `/api/categories`, `/api/transactions`, `/api/summary/:id`).
+* **Bot Parsing:** Validação de regex para comandos financeiros (decimais com ponto e vírgula, extração de categoria e descrição).
+
+---
 
 1. **Serviços como Tools prontas**: Métodos como `transactionService.create`, `transactionService.getBalance` e `categoryService.findByName` estão 100% tipados e desacoplados de bibliotecas de bot ou HTTP. O agente de IA pode chamá-los diretamente através de Function Calling / Tool Calling.
 2. **Ponto de Injeção Claro**: O handler [`fallback.handler.ts`](file:///C:/Users/Suporte%20Quick/Desktop/Sprint/Pegasus/Pegasus/src/modules/bot/handlers/messages/fallback.handler.ts) isola qualquer mensagem de texto, áudio ou foto recebida, permitindo direcioná-la para o Agente Orquestrador sem tocar na lógica dos comandos tradicionais.
