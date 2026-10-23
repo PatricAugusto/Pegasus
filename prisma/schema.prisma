@@ -1,0 +1,69 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String        @id @default(cuid())
+  telegramId   String        @unique
+  username     String?
+  firstName    String?
+  lastName     String?
+  currency     String        @default("BRL")
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  transactions Transaction[]
+  categories   Category[]
+  budgets      Budget[]
+}
+
+model Category {
+  id           String        @id @default(cuid())
+  name         String
+  type         String        @default("EXPENSE") // EXPENSE | INCOME
+  icon         String?       @default("🏷️")
+  color        String?
+  userId       String?
+  user         User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+  budgets      Budget[]
+  createdAt    DateTime      @default(now())
+
+  @@unique([name, userId])
+}
+
+model Transaction {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  categoryId    String?
+  category      Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  amount        Float
+  type          String    // EXPENSE | INCOME
+  description   String
+  paymentMethod String?   @default("PIX") // PIX, CREDIT, DEBIT, CASH, TRANSFER, OTHER
+  source        String    @default("COMMAND") // COMMAND, AGENT_LLM, AUDIO, OCR
+  date          DateTime  @default(now())
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Budget {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  categoryId  String?
+  category    Category? @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  month       Int       // 1 - 12
+  year        Int       // e.g. 2026
+  limitAmount Float
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([userId, categoryId, month, year])
+}
