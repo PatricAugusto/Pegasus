@@ -1,3 +1,4 @@
+import { GrammyError } from 'grammy';
 import { bot } from './bot.instance';
 import { userMiddleware } from './middlewares/user.middleware';
 import { botErrorHandler } from './middlewares/error.middleware';
@@ -37,7 +38,7 @@ export class BotModule {
     bot.catch(botErrorHandler);
   }
 
-  public static async registerCommandsMenu() {
+  public static async registerCommandsMenu(): Promise<boolean> {
     try {
       await bot.api.setMyCommands([
         { command: 'start', description: 'Inicia o bot e exibe o menu' },
@@ -50,8 +51,12 @@ export class BotModule {
         { command: 'ajuda', description: 'Instruções e exemplos de uso' },
       ]);
       console.log('✅ [Telegram] Comandos do menu registrados com sucesso.');
-    } catch {
-      console.warn('⚠️ [Telegram] Não foi possível registrar os comandos do menu (verifique se o token é válido).');
+      return true;
+    } catch (error: unknown) {
+      if (error instanceof GrammyError && [401, 404].includes(error.error_code)) {
+        return false;
+      }
+      throw error;
     }
   }
 }

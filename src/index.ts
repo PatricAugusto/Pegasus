@@ -1,3 +1,4 @@
+import { GrammyError } from 'grammy';
 import { app } from './modules/http/app';
 import { bot } from './modules/bot/bot.instance';
 import { BotModule } from './modules/bot/bot.module';
@@ -34,18 +35,24 @@ async function bootstrap() {
     console.log('👉 Adicione seu token gerado pelo @BotFather na variável TELEGRAM_BOT_TOKEN.');
     console.log('👉 A API Express e o SQLite continuarão funcionando normalmente.');
     console.log('----------------------------------------------------');
-  } else {
-    await BotModule.registerCommandsMenu();
-
+  } else if (await BotModule.registerCommandsMenu()) {
     if (!env.WEBHOOK_URL) {
-      bot.start({
+      void bot.start({
         onStart: (botInfo) => {
           console.log(`🤖 [Telegram] Bot @${botInfo.username} online e escutando via Polling!`);
         },
+      }).catch((error: unknown) => {
+        if (isInvalidTelegramToken(error)) {
+          logInvalidTelegramToken();
+          return;
+        }
+        console.error('❌ [Telegram] Falha ao iniciar o bot:', error);
       });
     } else {
       console.log(`📡 [Telegram] Bot operando via Webhook em: ${env.WEBHOOK_URL}`);
     }
+  } else {
+    logInvalidTelegramToken();
   }
 
   // Graceful shutdown
@@ -60,6 +67,16 @@ async function bootstrap() {
 
   process.on('SIGINT', () => shutdown('SIGINT'));
   process.on('SIGTERM', () => shutdown('SIGTERM'));
+}
+
+function logInvalidTelegramToken() {
+  console.error('⚠️ [Telegram] O Telegram rejeitou o token do bot (401 Unauthorized ou 404 Not Found).');
+  console.error('👉 Gere ou confira o token com o @BotFather e atualize TELEGRAM_BOT_TOKEN no arquivo .env.');
+  console.error('👉 O servidor HTTP e o banco de dados continuarão funcionando; reinicie o Pegasus após corrigir o token.');
+}
+
+function isInvalidTelegramToken(error: unknown): error is GrammyError {
+  return error instanceof GrammyError && [401, 404].includes(error.error_code);
 }
 
 bootstrap().catch((err) => {

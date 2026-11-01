@@ -58,12 +58,18 @@ src/
 
 ## ⚡ Como Rodar o Projeto
 
-### 1. Criar e Configurar o Bot no Telegram
+### 1. Instalar as dependências
+Na raiz do projeto, instale as dependências registradas no lockfile:
+```bash
+npm ci
+```
+
+### 2. Criar e Configurar o Bot no Telegram
 1. Abra seu Telegram e converse com o [@BotFather](https://t.me/BotFather).
 2. Envie o comando `/newbot` e siga as instruções para escolher nome e username.
 3. Copie o **Token de Acesso HTTP** fornecido pelo BotFather.
 
-### 2. Configurar o `.env`
+### 3. Configurar o `.env`
 Abra o arquivo `.env` na raiz do projeto e cole o seu token:
 ```env
 PORT=3000
@@ -71,8 +77,15 @@ NODE_ENV=development
 DATABASE_URL="file:./dev.db"
 TELEGRAM_BOT_TOKEN="SEU_TOKEN_AQUI"
 ```
+Use o token válido gerado pelo @BotFather. Não compartilhe esse token; se ele for rejeitado com `401 Unauthorized` ou `404 Not Found`, gere outro pelo @BotFather, atualize o `.env` localmente e reinicie o Pegasus. Sem um token válido, o servidor HTTP continua disponível, mas o bot do Telegram não funciona.
 
-### 3. Iniciar o Servidor & Bot
+### 4. Preparar o banco de dados
+Crie ou atualize as tabelas SQLite conforme o schema do Prisma:
+```bash
+npm run db:push
+```
+
+### 5. Iniciar o Servidor & Bot
 Em modo de desenvolvimento com hot-reload:
 ```bash
 npm run dev
