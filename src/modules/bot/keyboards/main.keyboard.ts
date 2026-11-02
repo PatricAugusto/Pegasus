@@ -2,17 +2,17 @@ import { InlineKeyboard } from 'grammy';
 
 export function getMainKeyboard(): InlineKeyboard {
   return new InlineKeyboard()
-    .text('📊 Saldo do Mês', 'action_saldo')
-    .text('📝 Extrato', 'action_extrato')
+    .text('💰 Bolsa do mês', 'action_saldo')
+    .text('📜 Diário', 'action_extrato')
     .row()
-    .text('📈 Resumo por Categoria', 'action_resumo')
-    .text('🏷️ Categorias', 'action_categorias')
+    .text('🧭 Mapa de gastos', 'action_resumo')
+    .text('🏰 Guilda', 'action_categorias')
     .row()
-    .text('❓ Ajuda & Comandos', 'action_ajuda');
+    .text('📖 Grimório', 'action_ajuda');
 }
 
 export function getTransactionFeedbackKeyboard(): InlineKeyboard {
   return new InlineKeyboard()
-    .text('📊 Ver Saldo Atualizado', 'action_saldo')
-    .text('📝 Extrato', 'action_extrato');
+    .text('💰 Ver bolsa', 'action_saldo')
+    .text('📜 Abrir diário', 'action_extrato');
 }

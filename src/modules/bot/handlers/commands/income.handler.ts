@@ -15,17 +15,17 @@ export async function handleIncomeCommand(ctx: CommandContext<BotContext>) {
 
   if (!rawText) {
     return ctx.reply(
-      `⚠️ *Como usar o /receita:*\n\n` +
+      `⚠️ *Sua recompensa precisa de alguns dados:*\n\n` +
         `Envie o valor e a descrição:\n` +
-        `Ex: \`/receita 3000 Salário Salário\`\n` +
-        `Ex: \`/receita 250 Freelance\``,
+        `Ex: \`/recompensa 3000 Salário Salário\`\n` +
+        `Ex: \`/recompensa 250 Freelance\``,
       { parse_mode: 'Markdown' }
     );
   }
 
   const parts = rawText.match(/^([0-9]+[.,]?[0-9]*)\s+(.+)$/);
   if (!parts) {
-    return ctx.reply('⚠️ Formato inválido. Use: `/receita <valor> <descrição>`\nExemplo: `/receita 2000 Salário`', {
+    return ctx.reply('⚠️ Confira os dados da recompensa. Use: `/recompensa <valor> <descrição>`\nExemplo: `/recompensa 2000 Salário`', {
       parse_mode: 'Markdown',
     });
   }
@@ -34,7 +34,7 @@ export async function handleIncomeCommand(ctx: CommandContext<BotContext>) {
   const amount = parseFloat(rawAmount);
 
   if (isNaN(amount) || amount <= 0) {
-    return ctx.reply('❌ Por favor, informe um valor numérico válido maior que zero.');
+    return ctx.reply('❌ Informe um valor válido maior que zero para essa recompensa.');
   }
 
   const descriptionAndCategory = parts[2].trim();
@@ -67,7 +67,7 @@ export async function handleIncomeCommand(ctx: CommandContext<BotContext>) {
   const catName = transaction.category?.name || 'Receitas';
 
   const replyMsg =
-    `🎉 *Receita Adicionada com Sucesso!*\n\n` +
+    `🎉 *Recompensa recebida!*\n\n` +
     `💰 *Valor:* \`${formatCurrency(amount)}\`\n` +
     `📝 *Descrição:* ${transaction.description}\n` +
     `📂 *Categoria:* ${catIcon} ${catName}\n` +

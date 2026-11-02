@@ -22,11 +22,17 @@ export class BotModule {
     bot.command('start', handleStartCommand);
     bot.command('ajuda', handleHelpCommand);
     bot.command('gasto', handleExpenseCommand);
+    bot.command('missao', handleExpenseCommand);
     bot.command('receita', handleIncomeCommand);
+    bot.command('recompensa', handleIncomeCommand);
     bot.command('saldo', handleBalanceCommand);
+    bot.command('bolsa', handleBalanceCommand);
     bot.command('extrato', handleStatementCommand);
+    bot.command('diario', handleStatementCommand);
     bot.command('resumo', handleSummaryCommand);
+    bot.command('mapa', handleSummaryCommand);
     bot.command('categorias', handleCategoriesCommand);
+    bot.command('guilda', handleCategoriesCommand);
 
     // 3. Callback Queries (Botões Inline)
     bot.callbackQuery(/^action_/, handleActionCallback);
@@ -41,14 +47,14 @@ export class BotModule {
   public static async registerCommandsMenu(): Promise<boolean> {
     try {
       await bot.api.setMyCommands([
-        { command: 'start', description: 'Inicia o bot e exibe o menu' },
-        { command: 'saldo', description: 'Exibe o saldo e totais do mês' },
-        { command: 'gasto', description: 'Registra despesa (/gasto 25.50 Almoço)' },
-        { command: 'receita', description: 'Registra receita (/receita 3000 Salário)' },
-        { command: 'extrato', description: 'Lista as últimas transações' },
-        { command: 'resumo', description: 'Gastos detalhados por categoria' },
-        { command: 'categorias', description: 'Lista as categorias disponíveis' },
-        { command: 'ajuda', description: 'Instruções e exemplos de uso' },
+        { command: 'start', description: 'Começa sua jornada financeira' },
+        { command: 'missao', description: 'Registra um gasto' },
+        { command: 'recompensa', description: 'Registra um ganho' },
+        { command: 'bolsa', description: 'Confere o saldo do mês' },
+        { command: 'diario', description: 'Mostra os últimos registros' },
+        { command: 'mapa', description: 'Mostra gastos por categoria' },
+        { command: 'guilda', description: 'Lista suas categorias' },
+        { command: 'ajuda', description: 'Abre o grimório de comandos' },
       ]);
       console.log('✅ [Telegram] Comandos do menu registrados com sucesso.');
       return true;

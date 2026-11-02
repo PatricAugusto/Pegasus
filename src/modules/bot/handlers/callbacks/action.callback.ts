@@ -36,11 +36,11 @@ export async function handleActionCallback(ctx: CallbackQueryContext<BotContext>
     }
     case 'action_ajuda': {
       const helpText =
-        `💡 *Exemplos rápidos de uso:*\n\n` +
-        `• Registrar café: \`/gasto 6.50 Café Expresso Alimentação\`\n` +
-        `• Registrar uber: \`/gasto 22.90 Corrida Transporte\`\n` +
-        `• Registrar salário: \`/receita 4000 Salário Mensal\`\n` +
-        `• Ver saldo: \`/saldo\``;
+        `📖 *Atalhos do grimório:*\n\n` +
+        `• Registrar um gasto: \`/missao 6.50 Café Alimentação\`\n` +
+        `• Registrar um ganho: \`/recompensa 4000 Salário\`\n` +
+        `• Conferir o saldo: \`/bolsa\`\n` +
+        `• Ver os últimos registros: \`/diario\``;
       await ctx.reply(helpText, { parse_mode: 'Markdown', reply_markup: getMainKeyboard() });
       break;
     }

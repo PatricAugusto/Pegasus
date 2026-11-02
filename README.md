@@ -97,14 +97,14 @@ npm run dev
 
 | Comando | Descrição | Exemplo |
 | :--- | :--- | :--- |
-| `/start` | Apresentação e menu de atalhos rápidos | `/start` |
-| `/ajuda` | Manual com exemplos de uso | `/ajuda` |
-| `/gasto <valor> <desc>` | Registra uma despesa no mês | `/gasto 35.50 Almoço Alimentação` |
-| `/receita <valor> <desc>` | Registra uma receita ou entrada | `/receita 3500 Salário Mensal` |
-| `/saldo` | Balanço líquido do mês (receitas vs despesas) | `/saldo` |
-| `/extrato` | Histórico dos 10 lançamentos mais recentes | `/extrato` |
-| `/resumo` | Gráfico em barras percentuais de gastos por categoria | `/resumo` |
-| `/categorias` | Lista as categorias cadastradas no sistema | `/categorias` |
+| `/start` | Começa sua jornada financeira | `/start` |
+| `/ajuda` | Abre o grimório de comandos | `/ajuda` |
+| `/missao <valor> <desc>` | Registra um gasto (alias: `/gasto`) | `/missao 35.50 Almoço Alimentação` |
+| `/recompensa <valor> <desc>` | Registra um ganho (alias: `/receita`) | `/recompensa 3500 Salário Mensal` |
+| `/bolsa` | Confere o saldo do mês (alias: `/saldo`) | `/bolsa` |
+| `/diario` | Mostra os 10 registros mais recentes (alias: `/extrato`) | `/diario` |
+| `/mapa` | Mostra os gastos por categoria (alias: `/resumo`) | `/mapa` |
+| `/guilda` | Lista suas categorias (alias: `/categorias`) | `/guilda` |
 
 *💡 Dica: O bot aceita valores tanto com ponto quanto com vírgula (ex: `25.50` ou `25,50`).*
 

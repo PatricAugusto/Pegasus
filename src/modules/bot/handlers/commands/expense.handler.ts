@@ -15,17 +15,17 @@ export async function handleExpenseCommand(ctx: CommandContext<BotContext>) {
 
   if (!rawText) {
     return ctx.reply(
-      `⚠️ *Como usar o /gasto:*\n\n` +
+      `⚠️ *Sua missão precisa de alguns dados:*\n\n` +
         `Envie o valor e a descrição:\n` +
-        `Ex: \`/gasto 32.50 Gasolina Transporte\`\n` +
-        `Ex: \`/gasto 15 Café com pão\``,
+        `Ex: \`/missao 32.50 Gasolina Transporte\`\n` +
+        `Ex: \`/missao 15 Café com pão\``,
       { parse_mode: 'Markdown' }
     );
   }
 
   const parts = rawText.match(/^([0-9]+[.,]?[0-9]*)\s+(.+)$/);
   if (!parts) {
-    return ctx.reply('⚠️ Formato inválido. Use: `/gasto <valor> <descrição>`\nExemplo: `/gasto 45.00 Mercado`', {
+    return ctx.reply('⚠️ Confira os dados da missão. Use: `/missao <valor> <descrição>`\nExemplo: `/missao 45.00 Mercado`', {
       parse_mode: 'Markdown',
     });
   }
@@ -34,7 +34,7 @@ export async function handleExpenseCommand(ctx: CommandContext<BotContext>) {
   const amount = parseFloat(rawAmount);
 
   if (isNaN(amount) || amount <= 0) {
-    return ctx.reply('❌ Por favor, informe um valor numérico válido maior que zero.');
+    return ctx.reply('❌ Informe um valor válido maior que zero para essa missão.');
   }
 
   const descriptionAndCategory = parts[2].trim();
@@ -67,8 +67,8 @@ export async function handleExpenseCommand(ctx: CommandContext<BotContext>) {
   const catName = transaction.category?.name || 'Geral';
 
   const replyMsg =
-    `✅ *Despesa Registrada com Sucesso!*\n\n` +
-    `💸 *Valor:* \`${formatCurrency(amount)}\`\n` +
+    `✅ *Missão registrada!*\n\n` +
+    `💸 *Custo:* \`${formatCurrency(amount)}\`\n` +
     `📝 *Descrição:* ${transaction.description}\n` +
     `📂 *Categoria:* ${catIcon} ${catName}\n` +
     `📅 *Data:* ${formatDateBR(transaction.date)}\n`;

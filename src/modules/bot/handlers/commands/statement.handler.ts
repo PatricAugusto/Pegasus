@@ -8,10 +8,10 @@ export async function renderStatementText(userId: string, limit: number = 10): P
   const items = await transactionService.getRecent(userId, limit);
 
   if (items.length === 0) {
-    return '📝 *Seu extrato está vazio.*\nRegistre seus primeiros lançamentos com `/gasto` ou `/receita`.';
+    return '📜 *Seu diário ainda está em branco.*\nRegistre uma `/missao` (gasto) ou uma `/recompensa` (ganho) para começar.';
   }
 
-  let text = `📝 *Últimas ${items.length} Movimentações:*\n━━━━━━━━━━━━━━━━━━━━\n`;
+  let text = `📜 *Diário da jornada: ${items.length} registros*\n━━━━━━━━━━━━━━━━━━━━\n`;
 
   for (const item of items) {
     const isIncome = item.type === 'INCOME';
@@ -29,7 +29,7 @@ export async function renderStatementText(userId: string, limit: number = 10): P
 export async function handleStatementCommand(ctx: CommandContext<BotContext>) {
   const dbUser = ctx.dbUser;
   if (!dbUser) {
-    return ctx.reply('❌ Usuário não identificado. Envie /start para inicializar.');
+    return ctx.reply('❌ Perfil não encontrado. Envie /start para iniciar sua jornada.');
   }
 
   const text = await renderStatementText(dbUser.id);

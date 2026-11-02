@@ -8,11 +8,11 @@ export async function renderSummaryText(userId: string): Promise<string> {
   const summary = await transactionService.getMonthlySummaryByCategory(userId);
 
   if (summary.breakdown.length === 0) {
-    return '📊 *Nenhum gasto registrado neste mês ainda.*';
+    return '🧭 *Seu mapa ainda está em branco.*\nRegistre uma missão para ver como seus gastos se distribuem.';
   }
 
-  let text = `📊 *Distribuição de Gastos do Mês:*\n`;
-  text += `💸 *Total Gasto:* \`${formatCurrency(summary.totalExpenses)}\`\n━━━━━━━━━━━━━━━━━━━━\n`;
+  let text = `🧭 *Mapa da jornada — gastos do mês*\n`;
+  text += `💸 *Total em missões:* \`${formatCurrency(summary.totalExpenses)}\`\n━━━━━━━━━━━━━━━━━━━━\n`;
 
   for (const item of summary.breakdown) {
     const progressBar = '█'.repeat(Math.round(item.percentage / 10)).padEnd(10, '░');
@@ -26,7 +26,7 @@ export async function renderSummaryText(userId: string): Promise<string> {
 export async function handleSummaryCommand(ctx: CommandContext<BotContext>) {
   const dbUser = ctx.dbUser;
   if (!dbUser) {
-    return ctx.reply('❌ Usuário não identificado. Envie /start para inicializar.');
+    return ctx.reply('❌ Perfil não encontrado. Envie /start para iniciar sua jornada.');
   }
 
   const text = await renderSummaryText(dbUser.id);

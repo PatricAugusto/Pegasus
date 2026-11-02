@@ -27,4 +27,15 @@ describe('Modules: Bot startup', () => {
 
     await expect(BotModule.registerCommandsMenu()).rejects.toBe(error);
   });
+
+  it('registers RPG command aliases alongside the existing commands', () => {
+    const commandSpy = vi.spyOn(bot, 'command');
+
+    BotModule.init();
+
+    const registeredCommands = commandSpy.mock.calls.map(([command]) => command);
+    expect(registeredCommands).toEqual(
+      expect.arrayContaining(['missao', 'recompensa', 'bolsa', 'diario', 'mapa', 'guilda']),
+    );
+  });
 });

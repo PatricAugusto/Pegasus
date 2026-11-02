@@ -4,19 +4,18 @@ import { getMainKeyboard } from '../../keyboards/main.keyboard';
 
 export async function handleFallbackMessage(ctx: Filter<BotContext, 'message:text'>) {
   if (ctx.message.text.startsWith('/')) {
-    return ctx.reply('❓ Comando não reconhecido. Use /ajuda para ver a lista de comandos.', {
+    return ctx.reply('❓ Esse comando não está no seu grimório. Use /ajuda para consultar os atalhos.', {
       reply_markup: getMainKeyboard(),
     });
   }
 
   // PONTO DE INTEGRAÇÃO FUTURA: Agente Orquestrador LLM (Gemini)
   await ctx.reply(
-    `🤖 Recebi sua mensagem: _"${ctx.message.text}"_\n\n` +
-      `Na próxima etapa, nosso **Agente LLM** entenderá mensagens em texto livre, áudios e comprovantes automaticamente!\n\n` +
-      `Por enquanto, utilize os comandos estruturados:\n` +
-      `• \`/gasto <valor> <descrição>\`\n` +
-      `• \`/receita <valor> <descrição>\`\n` +
-      `• \`/saldo\``,
+    `📨 Recebi sua mensagem: _"${ctx.message.text}"_\n\n` +
+      `Ainda não entendo mensagens livres, mas estes atalhos resolvem rapidinho:\n` +
+      `• \`/missao <valor> <descrição>\` para registrar um gasto\n` +
+      `• \`/recompensa <valor> <descrição>\` para registrar um ganho\n` +
+      `• \`/bolsa\` para conferir o saldo`,
     {
       parse_mode: 'Markdown',
       reply_markup: getMainKeyboard(),

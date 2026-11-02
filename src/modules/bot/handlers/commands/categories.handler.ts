@@ -9,13 +9,13 @@ export async function renderCategoriesText(userId?: string): Promise<string> {
   const expenses = categories.filter((c) => c.type === 'EXPENSE');
   const incomes = categories.filter((c) => c.type === 'INCOME');
 
-  let text = `🏷️ *Categorias Disponíveis*\n\n`;
-  text += `*🔴 Despesas:*\n`;
+  let text = `🏰 *Guilda — suas categorias*\n\n`;
+  text += `*🔴 Missões (despesas):*\n`;
   for (const c of expenses) {
     text += `• ${c.icon || '🏷️'} ${c.name}\n`;
   }
 
-  text += `\n*🟢 Receitas:*\n`;
+  text += `\n*🟢 Recompensas (receitas):*\n`;
   for (const c of incomes) {
     text += `• ${c.icon || '💰'} ${c.name}\n`;
   }

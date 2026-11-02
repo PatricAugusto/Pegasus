@@ -11,13 +11,13 @@ export async function renderBalanceText(userId: string): Promise<string> {
   const currentMonthName = getMonthName(balance.month);
 
   return (
-    `📊 *Balanço Financeiro — ${currentMonthName}/${balance.year}*\n` +
+    `💰 *Bolsa da jornada — ${currentMonthName}/${balance.year}*\n` +
     `━━━━━━━━━━━━━━━━━━━━\n` +
-    `📈 *Total de Receitas:*  \`${formatCurrency(balance.totalIncome)}\`\n` +
-    `📉 *Total de Despesas:*  \`${formatCurrency(balance.totalExpense)}\`\n` +
+    `📈 *Ganhos:*  \`${formatCurrency(balance.totalIncome)}\`\n` +
+    `🛡️ *Gastos:*  \`${formatCurrency(balance.totalExpense)}\`\n` +
     `━━━━━━━━━━━━━━━━━━━━\n` +
-    `${statusEmoji} *Saldo Líquido:*   \`${formatCurrency(balance.netBalance)}\`\n\n` +
-    `🔢 *Total de Lançamentos:* ${balance.transactionCount}`
+    `${statusEmoji} *Resultado do mês:*   \`${formatCurrency(balance.netBalance)}\`\n\n` +
+    `🧾 *Registros na jornada:* ${balance.transactionCount}`
   );
 }
 
