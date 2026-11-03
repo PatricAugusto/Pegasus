@@ -80,16 +80,43 @@ TELEGRAM_BOT_TOKEN="SEU_TOKEN_AQUI"
 Use o token válido gerado pelo @BotFather. Não compartilhe esse token; se ele for rejeitado com `401 Unauthorized` ou `404 Not Found`, gere outro pelo @BotFather, atualize o `.env` localmente e reinicie o Pegasus. Sem um token válido, o servidor HTTP continua disponível, mas o bot do Telegram não funciona.
 
 ### 4. Preparar o banco de dados
-Crie ou atualize as tabelas SQLite conforme o schema do Prisma:
+Em uma instalação nova, crie as tabelas SQLite conforme o schema do Prisma:
 ```bash
 npm run db:push
 ```
+
+Se estiver levando seus dados de outra máquina, **não execute `db:push` primeiro**. Restaure o backup conforme a seção [Backup e restauração do SQLite](#backup-e-restauração-do-sqlite).
 
 ### 5. Iniciar o Servidor & Bot
 Em modo de desenvolvimento com hot-reload:
 ```bash
 npm run dev
 ```
+
+### Backup e restauração do SQLite
+
+O SQLite é local à máquina e fica em `prisma/dev.db`. Esse arquivo e a pasta `backups/` são ignorados pelo Git: clonar o projeto ou rodar `db:push` em outra máquina não transfere os registros. Para compartilhar o mesmo banco em tempo real entre máquinas, seria necessário migrar para um banco remoto.
+
+Verifique a integridade estrutural, as chaves estrangeiras e a presença das tabelas esperadas:
+```bash
+npm run db:check
+```
+
+Crie um backup consistente mesmo com o servidor em execução:
+```bash
+npm run db:backup
+```
+O arquivo validado será salvo em `backups/pegasus-<data>.db`. Para salvar em outro local, passe um caminho:
+```bash
+npm run db:backup -- "D:\Backups\pegasus.db"
+```
+Copie o arquivo de backup para um local seguro fora do repositório e transfira-o para a outra máquina. Backups podem conter dados financeiros pessoais; proteja o acesso ao arquivo.
+
+Para restaurar, instale as dependências, configure o `.env`, pare o servidor Pegasus na máquina de destino e execute:
+```bash
+npm run db:restore -- "D:\Backups\pegasus.db"
+```
+O comando valida o backup antes de restaurar e preserva o banco atual em `backups/pre-restore-<data>.db` quando houver um banco existente. Após a restauração, confirme com `npm run db:check` e inicie o projeto. Se for uma instalação nova, não rode `db:push` antes da restauração.
 
 ---
 

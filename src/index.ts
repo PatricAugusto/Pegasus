@@ -3,7 +3,7 @@ import { app } from './modules/http/app';
 import { bot } from './modules/bot/bot.instance';
 import { BotModule } from './modules/bot/bot.module';
 import { env } from './config/env';
-import { connectDB } from './db/prisma';
+import { connectDB, disconnectDB } from './db/prisma';
 import { categoryService } from './modules/categories/category.service';
 
 async function bootstrap() {
@@ -56,17 +56,34 @@ async function bootstrap() {
   }
 
   // Graceful shutdown
+  let isShuttingDown = false;
   const shutdown = async (signal: string) => {
+    if (isShuttingDown) return;
+    isShuttingDown = true;
     console.log(`\n🛑 [Shutdown] Recebido sinal ${signal}. Encerrando aplicação com segurança...`);
-    server.close();
-    if (bot.isInited()) {
-      await bot.stop();
+    try {
+      await new Promise<void>((resolve, reject) => {
+        server.close((error) => {
+          if (error) reject(error);
+          else resolve();
+        });
+      });
+      if (bot.isInited()) {
+        await bot.stop();
+      }
+    } finally {
+      await disconnectDB();
     }
-    process.exit(0);
   };
 
-  process.on('SIGINT', () => shutdown('SIGINT'));
-  process.on('SIGTERM', () => shutdown('SIGTERM'));
+  const handleShutdown = (signal: string) => {
+    void shutdown(signal).catch((error: unknown) => {
+      console.error(`❌ [Shutdown] Falha ao encerrar após ${signal}:`, error);
+      process.exitCode = 1;
+    });
+  };
+  process.on('SIGINT', () => handleShutdown('SIGINT'));
+  process.on('SIGTERM', () => handleShutdown('SIGTERM'));
 }
 
 function logInvalidTelegramToken() {

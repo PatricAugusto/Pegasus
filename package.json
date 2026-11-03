@@ -14,7 +14,10 @@
     "test:watch": "vitest",
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
-    "db:generate": "prisma generate"
+    "db:generate": "prisma generate",
+    "db:check": "tsx scripts/db.ts check",
+    "db:backup": "tsx scripts/db.ts backup",
+    "db:restore": "tsx scripts/db.ts restore"
   },
   "keywords": [
     "finance",
